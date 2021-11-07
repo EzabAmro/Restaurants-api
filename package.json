@@ -1,0 +1,25 @@
+{
+  "name": "owner-one",
+  "version": "1.0.0",
+  "description": "Technical test",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nicolas Baez Mora",
+  "license": "ISC",
+  "dependencies": {
+    "cloudinary": "^1.27.1",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-fileupload": "^1.2.1",
+    "express-validator": "^6.13.0",
+    "mongoose": "^6.0.12",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.14"
+  }
+}
