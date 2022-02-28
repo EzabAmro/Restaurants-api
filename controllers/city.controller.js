@@ -19,8 +19,7 @@ const getCities = async (req = request, res = response) => {
     res.json(
         {
             ok: true,
-            amountCities,
-            cities
+            body: cities
         }
     );
 }
@@ -59,7 +58,7 @@ const addCity = async (req = request, res = response) => {
     res.json(
         {
             ok: true,
-            cityCreated
+            body: cityCreated
         }
     );
 }

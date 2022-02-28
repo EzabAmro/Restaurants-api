@@ -5,20 +5,20 @@ cloudinary.config(process.env.CLOUDINARY_URL);
 const Restaurant = require("../models/restaurant");
 
 const getRestaurants = async (req = request, res = response) => {
-    const { limit = 5, skip = 0 } = req.query;
+    //const { limit = 5, skip = 0 } = req.query;
     const queryRule = { state: true };
     //const restaurants = await Restaurant.find(queryRule).limit(limit).skip(skip);
-    const [restaurants, amountRestaurants] = await Promise.all(
+    /*const [restaurants, amountRestaurants] = await Promise.all(
         [
             Restaurant.find(queryRule).limit(Number(limit)).skip(Number(skip)).populate("city"),
             Restaurant.countDocuments(queryRule)
         ]
-    );
+    );*/
+    const restaurants = await Restaurant.find(queryRule).populate("city")
     res.json(
         {
             ok: true,
-            amountRestaurants,
-            restaurants
+            body: restaurants
         }
     );
 }
@@ -55,34 +55,51 @@ const getCustomRestaurantByCity = async (req = request, res = response) => {
 
 const addRestaurant = async (req = request, res = response) => {
 
-    const {
-        name,
-        description,
-        address,
-        city
-    } = req.body;
-
-    const { tempFilePath } = req.files.file;
-    const { secure_url } = await cloudinary.uploader.upload(tempFilePath);
-
-    const restaurant = new Restaurant(
-        {
+    try {
+        const {
             name,
             description,
             address,
-            city,
-            image: secure_url
-        }
-    );
+            city
+        } = req.body;
 
-    const restaurantCreated = await restaurant.save();
+        const { tempFilePath } = req.files.file;
+        const { secure_url } = await cloudinary.uploader.upload(tempFilePath);
 
-    res.json(
-        {
-            ok: true,
-            restaurantCreated
-        }
-    );
+        const restaurant = new Restaurant(
+            {
+                name,
+                description,
+                address,
+                city,
+                image: secure_url
+            }
+        );
+
+        const restaurantCreated = await restaurant.save();
+
+        return res.json(
+            {
+                ok: true,
+                body: {
+                    name,
+                    description,
+                    address,
+                    city: null,
+                    image: secure_url
+                }
+            }
+        );
+    } catch (error) {
+        console.log(`Error -> ${error}`)
+        return res.status(500).json(
+            {
+                ok: false,
+                message: "Something went wrong"
+            }
+        );
+    }
+
 }
 
 const updateRestaurant = async (req = request, res = response) => {
@@ -90,12 +107,24 @@ const updateRestaurant = async (req = request, res = response) => {
     const { id } = req.params;
     const dataRestaurant = req.body;
 
-    const restaurantUpdated = await Restaurant.findByIdAndUpdate(id, dataRestaurant);
+    const {
+        name,
+        description,
+        address,
+        city,
+        image
+    } = await Restaurant.findByIdAndUpdate(id, dataRestaurant);
 
     res.json(
         {
             ok: true,
-            restaurantUpdated
+            body: {
+                name,
+                description,
+                address,
+                city: null,
+                image
+            }
         }
     );
 }
@@ -115,12 +144,24 @@ const updateRestaurantImage = async (req = request, res = response) => {
     const { secure_url } = await cloudinary.uploader.upload(tempFilePath);
 
     model.image = secure_url;
-    await model.save();
+    const {
+        name,
+        description,
+        address,
+        city,
+        image
+    } = await model.save();
 
     res.json(
         {
             ok: true,
-            msg: "Image updated successfully"
+            body: {
+                name,
+                description,
+                address,
+                city: null,
+                image
+            }
         }
     );
 }
@@ -128,11 +169,23 @@ const updateRestaurantImage = async (req = request, res = response) => {
 const deleteRestaurant = async (req = request, res = response) => {
     const { id } = req.params;
     //const restaurantDeleted = await Restaurant.findByIdAndDelete(id);
-    const restaurantDeleted = await Restaurant.findByIdAndUpdate(id, { state: false });
+    const {
+        name,
+        description,
+        address,
+        city,
+        image
+    } = await Restaurant.findByIdAndUpdate(id, { state: false });
     res.json(
         {
             ok: true,
-            restaurantDeleted
+            body: {
+                name,
+                description,
+                address,
+                city: null,
+                image
+            }
         }
     );
 }

@@ -6,14 +6,13 @@ const getAllTablesReserve = async (req = request, res = response) => {
     const [amountTables, reserveTables] = await Promise.all(
         [
             Table.countDocuments({state: true}),
-            Table.find({state: true}).populate("restaurant", "name")
+            Table.find({state: true}).populate("restaurant")
         ]
     );
     res.json(
         {
             ok: true,
-            amountTables,
-            reserveTables
+            body: reserveTables
         }
     );
 
@@ -33,7 +32,11 @@ const reserveTable = async (req = request, res = response) => {
     res.json(
         {
             ok: true,
-            tableReserved
+            body: {
+                id: tableReserved.id,
+                name: tableReserved.name,
+                date: tableReserved.date
+            }
         }
     );
 
@@ -41,11 +44,15 @@ const reserveTable = async (req = request, res = response) => {
 
 const deleteReserveTable = async (req = request, res = response) => {
     const {id} = req.params;
-    const tableDeleted = await Table.findByIdAndUpdate(id, {state: false});
+    const tableDeleted = await Table.findByIdAndUpdate(id, {state: false}).populate("restaurant");
     res.json(
         {
             ok: true, 
-            tableDeleted
+            body: {
+                id: tableDeleted.id,
+                name: tableDeleted.name,
+                date: tableDeleted.date
+            }
         }
     );
 }

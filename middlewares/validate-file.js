@@ -9,6 +9,7 @@ const validateFlieUploades = (req = request, res = response, next) => {
         Object.keys(req.files).length == 0 ||
         !req.files.file
     ) {
+        console.log("No files were uploaded correctly")
         return res.status(400).json(
             {
                 ok: false,
@@ -21,12 +22,15 @@ const validateFlieUploades = (req = request, res = response, next) => {
         const cutName = file.name.split(".");
         const extensionName = cutName[cutName.length - 1];
 
-        if (!validExtensionsForImage.includes(extensionName)) return res.status(400).json(
-            {
-                ok: false,
-                msg: `Invalid extension of the image, extensions valid: ${validExtensionsForImage}`
-            }
-        );
+        if (!validExtensionsForImage.includes(extensionName)) {
+            console.log(`Invalid extension of the image, extensions valid: ${validExtensionsForImage}`)
+            return res.status(400).json(
+                {
+                    ok: false,
+                    msg: `Invalid extension of the image, extensions valid: ${validExtensionsForImage}`
+                }
+            );
+        }
     }
     next();
 }

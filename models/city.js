@@ -10,11 +10,5 @@ const citySchema = Schema(
     }
 );
 
-citySchema.methods.toJSON = function () {
-    const {__v, _id, ...cityRestaurant} = this.toObject();
-    cityRestaurant.id = _id;
-    return cityRestaurant;
-}
-
 
 module.exports = model("City", citySchema);
